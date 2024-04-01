@@ -2,19 +2,45 @@ import React from "react";
 import { Button } from "../ui/button";
 import { useAppDispatch } from "@/Redux/features/hook";
 import { removeTodo, toggleComplete } from "@/Redux/features/todoSlice";
+import { useUpdateTodoMutation } from "@/Redux/features/api/api";
+
 
 type TTodoCardProps = {
-  id: string;
+  _id: string
   title: string;
   description: string;
   isCompleted?: boolean;
   priority:string;
 };
 
-const TodoCard = ({title, description, id,priority, isCompleted }: TTodoCardProps) => {
-  const dispatch = useAppDispatch();
+const TodoCard = ({title, description,priority,_id, isCompleted }: TTodoCardProps) => {
+
+  const [updateTodo,{isLoading}]=useUpdateTodoMutation()
+  // const dispatch = useAppDispatch();
   const toggleState = () => {
-     dispatch(toggleComplete(id))
+
+     
+    //  dispatch(toggleComplete(id))
+
+    const taskData ={
+      title,
+       description,
+       priority, 
+       isCompleted:!isCompleted
+    }
+
+     const options ={
+            id:_id,
+            data: {
+              title,
+               description,
+               priority, 
+               isCompleted:!isCompleted
+            }
+     }
+    
+
+    updateTodo(options)
   };
   return (
     <div className="bg-white  rounded-md flex  justify-between items-center p-3 border ">
@@ -24,6 +50,7 @@ const TodoCard = ({title, description, id,priority, isCompleted }: TTodoCardProp
         
         name="complete"
         id="complete"
+        defaultChecked={isCompleted}
       />
       <p className="font-semibold flex-1 ">{title} </p>
       <div className="flex-1 flex items-center gap-3">
@@ -50,7 +77,7 @@ const TodoCard = ({title, description, id,priority, isCompleted }: TTodoCardProp
       </div>
       <p className="flex-[2]">{description}</p>
       <div className="space-x-5">
-        <Button onClick={() => dispatch(removeTodo(id))} className="bg-red-600">
+        <Button className="bg-red-600">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
